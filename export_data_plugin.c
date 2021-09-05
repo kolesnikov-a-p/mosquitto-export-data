@@ -66,6 +66,7 @@ int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char 
     return MOSQ_ERR_AUTH;
   }
 
+  printf("===========================>=========================\n");
   printf(username);
 
   int ret = MOSQ_ERR_SUCCESS;
