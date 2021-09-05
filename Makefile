@@ -1,10 +1,10 @@
 MOSQUITTO_SRC ?= ./
 
-CFLAGS = -std=gnu99 -fPIC -I../lib -I../src ` --includes` -Wall -Wextra -O2
+CFLAGS = -std=gnu99 -fPIC -I../lib -I../src -Wall -Wextra -O2
 ifdef DEBUG
 CFLAGS += -DPYAUTH_DEBUG -O0 -ggdb3
 endif
-LIBS = ` --libs` -lmosquitto
+LIBS = -lmosquitto
 DESTDIR = /usr
 
 ifdef USE_CARES
