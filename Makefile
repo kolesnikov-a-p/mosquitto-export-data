@@ -29,8 +29,7 @@ export_data_plugin.so : export_data_plugin.o
 	$(CC) $(CFLAGS) -shared -o $@ $^  $(LIBS)  $(LDFLAGS)
 
 install: export_data_plugin.so
-	mkdir -p $(DESTDIR)/lib/mosquitto
-	install -s -m 755 export_data_plugin.so $(DESTDIR)/lib/mosquitto
+	install -s -m 755 export_data_plugin.so /etc/mosquitto/conf.d/export-data-plugin
 
 clean :
 	rm -f export_data_plugin.so *.o
