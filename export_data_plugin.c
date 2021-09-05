@@ -36,14 +36,17 @@ static int callback_message(int event, void *event_data, void *userdata)
 	}
 
 	/* Print "hello " to the payload */
-	snprintf(new_payload, new_payloadlen, "hello ");
-	memcpy(new_payload+(uint32_t)strlen("hello "), ed->payload, ed->payloadlen);
+	/////snprintf(new_payload, new_payloadlen, "hello ");
+	/////memcpy(new_payload+(uint32_t)strlen("hello "), ed->payload, ed->payloadlen);
+
+  printf(ed->topic);
+  printf(ed->payload);
 
 	/* Assign the new payload and payloadlen to the event data structure. You
 	 * must *not* free the original payload, it will be handled by the
 	 * broker. */
-	ed->payload = new_payload;
-	ed->payloadlen = new_payloadlen;
+	// ed->payload = new_payload;
+	// ed->payloadlen = new_payloadlen;
 	
 	return MOSQ_ERR_SUCCESS;
 }
