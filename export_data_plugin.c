@@ -94,7 +94,7 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
   printf("====================================================\n");
   printf(topic);
   printf(" > ");
-  printf(userdata);
+  printf(MOSQ_AUTH_PLUGIN_VERSION);
   printf(" :");
   printf(access);
   printf("\n====================================================\n");
@@ -116,3 +116,4 @@ int mosquitto_auth_psk_key_get(void *userdata, const char *hint, const char *ide
 {
   return MOSQ_ERR_AUTH;
 }
+
