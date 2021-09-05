@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+
 
 #include "mosquitto_broker.h"
 #include "mosquitto_plugin.h"
@@ -64,7 +66,7 @@ static int callback_message(int event, void *event_data, void *userdata)
 	 * must *not* free the original payload, it will be handled by the
 	 * broker. */
 
-
+  sleep(1);
 	//ed->payload = new_payload;
 	//ed->payloadlen = new_payloadlen;
 	
