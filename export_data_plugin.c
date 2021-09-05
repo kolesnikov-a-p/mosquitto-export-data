@@ -42,35 +42,35 @@ int mosquitto_auth_security_cleanup(void *user_data, struct mosquitto_auth_opt *
   return MOSQ_ERR_SUCCESS;
 }
 
-// #if MOSQ_AUTH_PLUGIN_VERSION >= 4
-// int mosquitto_auth_unpwd_check(void *user_data, struct mosquitto *client, const char *username, const char *password)
-// #elif MOSQ_AUTH_PLUGIN_VERSION >=3
-// int mosquitto_auth_unpwd_check(void *userdata, const struct mosquitto *client, const char *username, const char *password)
-// #else
-// int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char *password)
-// #endif
-// {
-//   #if MOSQ_AUTH_PLUGIN_VERSION >= 3
-//     const char* clientid = mosquitto_client_id(client);
-//   #else
-//     const char* clientid = "";
-//   #endif
-//   if (username == NULL || password == NULL) {
-//     printf("error: received null username or password for unpwd check\n");
-//     fflush(stdout);
-//     return MOSQ_ERR_AUTH;
-//   }
+#if MOSQ_AUTH_PLUGIN_VERSION >= 4
+int mosquitto_auth_unpwd_check(void *user_data, struct mosquitto *client, const char *username, const char *password)
+#elif MOSQ_AUTH_PLUGIN_VERSION >=3
+int mosquitto_auth_unpwd_check(void *userdata, const struct mosquitto *client, const char *username, const char *password)
+#else
+int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char *password)
+#endif
+{
+  #if MOSQ_AUTH_PLUGIN_VERSION >= 3
+    const char* clientid = mosquitto_client_id(client);
+  #else
+    const char* clientid = "";
+  #endif
+  if (username == NULL || password == NULL) {
+    printf("error: received null username or password for unpwd check\n");
+    fflush(stdout);
+    return MOSQ_ERR_AUTH;
+  }
 
-//   printf("====================================================\n");
-//   printf(username);
-//   printf("\n====================================================\n");
+  printf("====================================================\n");
+  printf(username);
+  printf("\n====================================================\n");
 
 
 
-//     return MOSQ_ERR_SUCCESS;
-//     // return MOSQ_ERR_AUTH;
-//     // return MOSQ_ERR_UNKNOWN;
-// }
+    return MOSQ_ERR_SUCCESS;
+    // return MOSQ_ERR_AUTH;
+    // return MOSQ_ERR_UNKNOWN;
+}
 
 #if MOSQ_AUTH_PLUGIN_VERSION >= 4
 int mosquitto_auth_acl_check(void *user_data, int access, struct mosquitto *client, const struct mosquitto_acl_msg *msg)
