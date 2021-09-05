@@ -3,116 +3,78 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include <mosquitto_broker.h>
-#include <mosquitto_plugin.h>
-#include <mosquitto.h>
+#include "mosquitto_broker.h"
+#include "mosquitto_plugin.h"
+#include "mosquitto.h"
+#include "mqtt_protocol.h"
 
+#define UNUSED(A) (void)(A)
 
-#if MOSQ_AUTH_PLUGIN_VERSION >= 3
-# define mosquitto_auth_opt mosquitto_opt
-#endif
+static mosquitto_plugin_id_t *mosq_pid = NULL;
 
-
-int mosquitto_auth_plugin_version(void) {
-  #ifdef MOSQ_AUTH_PLUGIN_VERSION
-    #if MOSQ_AUTH_PLUGIN_VERSION == 5
-      return 4; // This is v2.0, use the backwards compatibility
-    #else
-      return MOSQ_AUTH_PLUGIN_VERSION;
-    #endif
-  #else
-    return 4;
-  #endif
-}
-
-int mosquitto_auth_plugin_init(void **user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count) {
-  return MOSQ_ERR_SUCCESS;
-}
-
-int mosquitto_auth_plugin_cleanup(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count) {
-
-  return MOSQ_ERR_SUCCESS;
-}
-
-int mosquitto_auth_security_init(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count, bool reload) {
-  return MOSQ_ERR_SUCCESS;
-}
-
-int mosquitto_auth_security_cleanup(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count, bool reload) {
-  return MOSQ_ERR_SUCCESS;
-}
-
-#if MOSQ_AUTH_PLUGIN_VERSION >= 4
-int mosquitto_auth_unpwd_check(void *user_data, struct mosquitto *client, const char *username, const char *password)
-#elif MOSQ_AUTH_PLUGIN_VERSION >=3
-int mosquitto_auth_unpwd_check(void *userdata, const struct mosquitto *client, const char *username, const char *password)
-#else
-int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char *password)
-#endif
+static int callback_message(int event, void *event_data, void *userdata)
 {
-  #if MOSQ_AUTH_PLUGIN_VERSION >= 3
-    const char* clientid = mosquitto_client_id(client);
-  #else
-    const char* clientid = "";
-  #endif
-  if (username == NULL || password == NULL) {
-    printf("error: received null username or password for unpwd check\n");
-    fflush(stdout);
-    return MOSQ_ERR_AUTH;
-  }
+	struct mosquitto_evt_message *ed = event_data;
+	char *new_payload;
+	uint32_t new_payloadlen;
 
-  printf("====================================================\n");
-  printf(username);
-  printf("\n====================================================\n");
+	UNUSED(event);
+	UNUSED(userdata);
 
+	/* This simply adds "hello " to the front of every payload. You can of
+	 * course do much more complicated message processing if needed. */
 
+	/* Calculate the length of our new payload */
+	new_payloadlen = ed->payloadlen + (uint32_t)strlen("hello ")+1;
 
-    return MOSQ_ERR_SUCCESS;
-    // return MOSQ_ERR_AUTH;
-    // return MOSQ_ERR_UNKNOWN;
+	/* Allocate some memory - use
+	 * mosquitto_calloc/mosquitto_malloc/mosquitto_strdup when allocating, to
+	 * allow the broker to track memory usage */
+	new_payload = mosquitto_calloc(1, new_payloadlen);
+	if(new_payload == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
+
+	/* Print "hello " to the payload */
+	snprintf(new_payload, new_payloadlen, "hello ");
+	memcpy(new_payload+(uint32_t)strlen("hello "), ed->payload, ed->payloadlen);
+
+	/* Assign the new payload and payloadlen to the event data structure. You
+	 * must *not* free the original payload, it will be handled by the
+	 * broker. */
+	ed->payload = new_payload;
+	ed->payloadlen = new_payloadlen;
+	
+	return MOSQ_ERR_SUCCESS;
 }
 
-#if MOSQ_AUTH_PLUGIN_VERSION >= 4
-int mosquitto_auth_acl_check(void *user_data, int access, struct mosquitto *client, const struct mosquitto_acl_msg *msg)
-#elif MOSQ_AUTH_PLUGIN_VERSION >= 3
-int mosquitto_auth_acl_check(void *userdata, int access, const struct mosquitto *client, const struct mosquitto_acl_msg *msg)
-#else
-int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *username, const char *topic, int access)
-#endif
+int mosquitto_plugin_version(int supported_version_count, const int *supported_versions)
 {
-  #if MOSQ_AUTH_PLUGIN_VERSION >= 3
-    const char* clientid = mosquitto_client_id(client);
-    const char* username = mosquitto_client_username(client);
-    const char* topic = msg->topic;
-  #endif
-  if (clientid == NULL || username == NULL || topic == NULL || access < 1) {
-    printf("error: received null username, clientid or topic, or access is equal or less than 0 for acl check\n");
-    fflush(stdout);
-    return MOSQ_ERR_ACL_DENIED;
-  }
+	int i;
 
-  printf("====================================================\n");
-  printf(topic);
-  printf(" - ");
-  printf(msg->payload);
-
-  printf("\n====================================================\n");
-  
-
-
-    return MOSQ_ERR_SUCCESS;
-    // return MOSQ_ERR_ACL_DENIED;
-    // return MOSQ_ERR_UNKNOWN;
+	for(i=0; i<supported_version_count; i++){
+		if(supported_versions[i] == 5){
+			return 5;
+		}
+	}
+	return -1;
 }
 
-#if MOSQ_AUTH_PLUGIN_VERSION >= 4
-int mosquitto_auth_psk_key_get(void *user_data, struct mosquitto *client, const char *hint, const char *identity, char *key, int max_key_len)
-#elif MOSQ_AUTH_PLUGIN_VERSION >= 3
-int mosquitto_auth_psk_key_get(void *userdata, const struct mosquitto *client, const char *hint, const char *identity, char *key, int max_key_len)
-#else
-int mosquitto_auth_psk_key_get(void *userdata, const char *hint, const char *identity, char *key, int max_key_len)
-#endif
+int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *opts, int opt_count)
 {
-  return MOSQ_ERR_AUTH;
+	UNUSED(user_data);
+	UNUSED(opts);
+	UNUSED(opt_count);
+
+	mosq_pid = identifier;
+	return mosquitto_callback_register(mosq_pid, MOSQ_EVT_MESSAGE, callback_message, NULL, NULL);
 }
 
+int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int opt_count)
+{
+	UNUSED(user_data);
+	UNUSED(opts);
+	UNUSED(opt_count);
+
+	return mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_MESSAGE, callback_message, NULL);
+}
