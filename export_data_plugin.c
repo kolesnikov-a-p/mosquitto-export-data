@@ -93,8 +93,8 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
 
   printf("====================================================\n");
   printf(topic);
-  printf(" - ")
-  printf(msg->payload)
+  printf(" - ");
+  printf(msg->payload);
 
   printf("\n====================================================\n");
   
