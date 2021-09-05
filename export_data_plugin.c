@@ -33,6 +33,7 @@ static int callback_message(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_message *ed = event_data;
 	char *new_payload;
+  char *new_topic;
 	uint32_t new_payloadlen;
 
 	UNUSED(event);
@@ -62,9 +63,10 @@ static int callback_message(int event, void *event_data, void *userdata)
 	/* Assign the new payload and payloadlen to the event data structure. You
 	 * must *not* free the original payload, it will be handled by the
 	 * broker. */
-  ed->topic = "anton/xxxx";
-	ed->payload = new_payload;
-	ed->payloadlen = new_payloadlen;
+
+
+	//ed->payload = new_payload;
+	//ed->payloadlen = new_payloadlen;
 	
 	return MOSQ_ERR_SUCCESS;
 }
