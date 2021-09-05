@@ -66,6 +66,8 @@ int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char 
     return MOSQ_ERR_AUTH;
   }
 
+  printf(username);
+
   int ret = MOSQ_ERR_SUCCESS;
 
   switch (ret)
@@ -104,7 +106,7 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
     return MOSQ_ERR_ACL_DENIED;
   }
 
-
+  printf(topic);
 
   int ret = MOSQ_ERR_SUCCESS;
 

@@ -13,5 +13,6 @@ cd mosquitto-2.0.11 && make && make install
 systemctl unmask mosquitto service && systemctl start mosquitto
 
 
-make MOSQUITTO_SRC=/root/mosquitto-2.0.11
+make MOSQUITTO_SRC=/root/mosquitto-2.0.11 && make install
 
+/usr/local/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
