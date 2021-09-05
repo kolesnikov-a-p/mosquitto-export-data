@@ -30,7 +30,7 @@ int mosquitto_auth_plugin_version(void) {
 }
 
 int mosquitto_auth_plugin_init(void **user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count) {
-
+  printf("===========================mosquitto_auth_plugin_init=========================\n");
   return MOSQ_ERR_SUCCESS;
 }
 
@@ -40,6 +40,7 @@ int mosquitto_auth_plugin_cleanup(void *user_data, struct mosquitto_auth_opt *au
 }
 
 int mosquitto_auth_security_init(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count, bool reload) {
+  printf("===========================mosquitto_auth_security_init=========================\n");
   return MOSQ_ERR_SUCCESS;
 }
 
@@ -66,7 +67,7 @@ int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char 
     return MOSQ_ERR_AUTH;
   }
 
-  printf("===========================>=========================\n");
+  printf("===========================mosquitto_auth_unpwd_check=========================\n");
   printf(username);
 
   int ret = MOSQ_ERR_SUCCESS;
@@ -101,6 +102,7 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
     const char* username = mosquitto_client_username(client);
     const char* topic = msg->topic;
   #endif
+    printf("===========================mosquitto_auth_acl_check=========================\n");
   if (clientid == NULL || username == NULL || topic == NULL || access < 1) {
     printf("error: received null username, clientid or topic, or access is equal or less than 0 for acl check\n");
     fflush(stdout);
