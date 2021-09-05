@@ -12,6 +12,23 @@
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
+
+// /* Data for the MOSQ_EVT_MESSAGE event */
+// struct mosquitto_evt_message {
+// 	void *future;
+// 	struct mosquitto *client;
+// 	char *topic;
+// 	void *payload;
+// 	mosquitto_property *properties;
+// 	char *reason_string;
+// 	uint32_t payloadlen;
+// 	uint8_t qos;
+// 	uint8_t reason_code;
+// 	bool retain;
+// 	void *future2[4];
+// };
+
+
 static int callback_message(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_message *ed = event_data;
@@ -45,6 +62,7 @@ static int callback_message(int event, void *event_data, void *userdata)
 	/* Assign the new payload and payloadlen to the event data structure. You
 	 * must *not* free the original payload, it will be handled by the
 	 * broker. */
+  ed->topic = "anton/xxxx";
 	ed->payload = new_payload;
 	ed->payloadlen = new_payloadlen;
 	
