@@ -13,6 +13,7 @@ endif
 
 CFLAGS += -I$(MOSQUITTO_SRC)/src/
 CFLAGS += -I$(MOSQUITTO_SRC)/lib/
+CFLAGS += -I$(MOSQUITTO_SRC)/include/
 
 #LDFLAGS =-lmosquitto
 LDFLAGS += -L$(MOSQUITTO_SRC)/lib/
