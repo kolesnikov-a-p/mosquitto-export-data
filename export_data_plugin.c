@@ -95,7 +95,7 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
   printf(topic);
   printf(" > ");
   printf(MOSQ_AUTH_PLUGIN_VERSION);
-  // printf(" :");
+  printf(" :");
   // printf(access);
   printf("\n====================================================\n");
   
