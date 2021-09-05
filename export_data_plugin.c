@@ -13,10 +13,6 @@
 #endif
 
 
-#define AuthRejected 0
-#define AuthGranted 1
-#define AuthError 2
-
 int mosquitto_auth_plugin_version(void) {
   #ifdef MOSQ_AUTH_PLUGIN_VERSION
     #if MOSQ_AUTH_PLUGIN_VERSION == 5
