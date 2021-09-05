@@ -1,6 +1,6 @@
 MOSQUITTO_SRC ?= ./
 
-CFLAGS = -std=gnu99 -fPIC -I../lib -I../src -Wall -Wextra -O2
+CFLAGS = -std=gnu99 -fPIC -I../lib -I../src
 ifdef DEBUG
 CFLAGS += -DPYAUTH_DEBUG -O0 -ggdb3
 endif
